@@ -19,7 +19,12 @@
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='32' fill='%23ffdb00'/><rect y='32' width='64' height='32' fill='%230056b3'/></svg>"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"
+    />
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://cdn.maptiler.com/maptiler-sdk-js/v3.6.1/maptiler-sdk.umd.min.js"></script>
@@ -284,7 +289,6 @@
         z-index: 5;
         width: 100%;
         bottom: 0;
-        height: 60px;
         display: flex;
         justify-content: center;
         gap: 10px;
@@ -372,6 +376,7 @@
       }
       .map_container {
         width: 100%;
+        height: 100vh;
       }
       /* Form */
       form {
@@ -434,6 +439,50 @@
         gap: 10px;
         align-items: center;
       }
+      .control_container {
+        max-width: 650px;
+        width: 100%;
+      }
+      .swiper {
+        width: 100%;
+        height: 100%;
+      }
+
+      .swiper-slide {
+        text-align: center;
+        font-size: 18px;
+        background: linear-gradient(180deg, rgba(14, 22, 36), rgba(14, 22, 36));
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .swiper-slide img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .swiper-v {
+        background: #000;
+      }
+      .slide_container_custom {
+        display: flex;
+        flex-direction: column;
+      }
+      .control_wrapper {
+        width: 100%;
+        display: flex;
+        height: 140px;
+        justify-content: center;
+      }
+      .control_container h4 {
+        font-size: 14px;
+        margin: 0;
+        padding: 10px;
+      }
 
       /* Responsive */
       @media (max-width: 900px) {
@@ -475,24 +524,7 @@
   </head>
   <body>
     <a href="#main" class="skip-link">Skip to content</a>
-    <!-- <header>
-      <div class="container nav" role="navigation" aria-label="Main">
-        <div class="brand" aria-label="Ukraine Community home">
-          <span class="flag" aria-hidden="true"
-            ><i class="y"></i><i class="b"></i
-          ></span>
-          <span>Ukraine Community</span>
-        </div>
-        <nav aria-label="Site">
-          <ul>
-            <li><a href="#about">About</a></li>
-            <li><a href="#offer">Offerings</a></li>
-            <li><a href="#events">Events</a></li>
-            <li><a class="btn ghost">Join</a></li>
-          </ul>
-        </nav>
-      </div>
-    </header> -->
+
     <section class="hero" aria-labelledby="hero-title">
       <div class="container wrap">
         <div>
@@ -511,10 +543,36 @@
       </div>
     </section>
     <div class="map_container">
-      <div class="interactive_map"></div>
       <div class="buttons_year">
-        <button id="beforeBtn">1918</button>
-        <button id="afterBtn">2025</button>
+        <div class="control_wrapper">
+          <div class="control_container">
+            <div class="swiper mySwiper swiper-h">
+              <div class="swiper-wrapper">
+                <div class="swiper-slide slide_container_custom">
+                  <h4>BORDERS OF UKRAINE</h4>
+                  <div class="swiper mySwiper2 swiper-v">
+                    <div class="swiper-wrapper">
+                      <div class="swiper-slide">
+                        <p>Borders of 1918</p>
+                      </div>
+                      <div class="swiper-slide">
+                        <div class="swiper-slide"><p>Borders of 2025</p></div>
+                      </div>
+                    </div>
+                    <div class="swiper-pagination"></div>
+                  </div>
+                </div>
+                <div class="swiper-slide">
+                  <h4>Ukrainian Catholic Church</h4>
+                </div>
+                <div class="swiper-slide"><h4>Other maps</h4></div>
+
+                <div class="swiper-slide"><h4>Other maps</h4></div>
+              </div>
+              <div class="swiper-pagination"></div>
+            </div>
+          </div>
+        </div>
       </div>
       <div id="map"></div>
     </div>
@@ -695,15 +753,6 @@
               </select>
             </div>
             <div>
-              <label for="message">Message (optional)</label>
-              <textarea
-                id="message"
-                name="message"
-                rows="4"
-                placeholder="Tell us a bit about you or your interests"
-              ></textarea>
-            </div>
-            <div>
               <button class="btn primary" type="submit">Submit</button>
               <span id="privacy-note" class="note"
                 >We store only what’s needed to contact you. No ads. No selling
@@ -745,11 +794,29 @@
         [44.38, 22.15], // south-west (lat, lng)
         [52.38, 40.23], // north-east (lat, lng)
       ];
+      // [latitude, longitude, "Name"]
+      const churches = [
+        [
+          47.907605,
+          33.456852,
+          "Church of the Assumption of the Blessed Virgin Mary",
+        ],
+        [45.9075, 33.4567, "Roman Catholic Church (Wikimapia listing)"],
+        [47.809, 33.3, "Parish of St. Nicholas the Wonderworker (approx.)"],
+        [47.715, 34.22, "Historic St. Nicholas Chapel (approx.)"],
+        [46.612, 32.13, "Chapel of St. Brigid (approx.)"],
+        [49.52, 33.04, "Catholic Parish (placeholder)"],
+        [48.425, 31.45, "Catholic Parish (placeholder)"],
+        [48.33, 30.46, "Catholic Parish (placeholder)"],
+        [48.235, 29.47, "Catholic Parish (placeholder)"],
+        [48.74, 27, "Catholic Parish (placeholder)"],
+      ];
+
       const key = "40ctAjlYbSwks22PprOn";
       // Initialize map centered on Ukraine
       const map = L.map("map", {
         center: [48.5, 31.5],
-        zoom: 5,
+        zoom: 4,
         maxBounds: [
           [35, 15], // юго-западная точка (примерно)
           [60, 50], // северо-восточная точка (примерно)
@@ -1719,22 +1786,14 @@
         fillOpacity: 0.15,
         weight: 2,
       });
-      const marker = L.marker([50.45, 30.52]).addTo(map);
+      const marker = L.marker([50.45, 30.52]);
       const myPolygon2 = L.polygon(polygonPoints2025, {
         color: "#46C767",
         fillColor: "#46C767",
         fillOpacity: 0.15,
         weight: 2,
       });
-      myPolygon2.addTo(map);
-      document.getElementById("beforeBtn").onclick = () => {
-        myPolygon2.remove();
-        myPolygon1.addTo(map);
-      };
-      document.getElementById("afterBtn").onclick = () => {
-        myPolygon1.remove();
-        myPolygon2.addTo(map);
-      };
+
       myPolygon1.bindPopup("1918");
       marker.bindPopup(
         `
@@ -1749,11 +1808,57 @@
           `,
         { className: "custom-popup" }
       );
-
+      const mapsArray = [[myPolygon1, myPolygon2], null];
+      myPolygon1.addTo(map);
       const drawnFeatures = new L.FeatureGroup();
       map.addLayer(drawnFeatures);
       map.on("draw:created", function (e) {
         console.log(e);
+      });
+      let swiperState = [0, 0];
+      const swiper = new Swiper(".mySwiper", {
+        spaceBetween: 50,
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+      });
+
+      const swiper2 = new Swiper(".mySwiper2", {
+        direction: "vertical",
+        spaceBetween: 50,
+        pagination: {
+          el: ".swiper-pagination",
+          clickable: true,
+        },
+      });
+      let markers = [];
+      swiper.on("slideChange", function () {
+        console.log(swiperState);
+
+        mapsArray[0][swiperState[1]].remove();
+        swiperState[0] = swiper.activeIndex;
+        myPolygon2.remove();
+        myPolygon2.remove();
+
+        if (swiperState[0] == 1) {
+          churches.forEach((church) => {
+            let marker = L.marker([church[0], church[1]]).bindPopup(church[2]);
+            marker.addTo(map);
+            markers.push(marker);
+          });
+        }
+        if (swiperState[0] != 1) {
+          markers.forEach((marker) => map.removeLayer(marker));
+          mapsArray[0][swiperState[1]].addTo(map);
+        }
+      });
+      swiper2.on("slideChange", function () {
+        mapsArray[0][swiperState[1]].remove();
+        swiperState[1] = swiper2.activeIndex;
+        console.log(swiperState);
+        if (swiperState[0] > 0) return;
+        mapsArray[swiperState[0]][swiperState[1]].addTo(map);
       });
     </script>
   </body>
