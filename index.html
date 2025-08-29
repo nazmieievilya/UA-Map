@@ -1,0 +1,1745 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ukraine Community — Together. Stronger. Connected.</title>
+    <meta
+      name="description"
+      content="A welcoming, non-commercial community for Ukrainians and friends of Ukraine. Connect, share culture, get support, and join events."
+    />
+    <meta property="og:title" content="Ukraine Community" />
+    <meta
+      property="og:description"
+      content="A welcoming, non-commercial community for Ukrainians and friends of Ukraine."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#1E2A3A" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='32' fill='%23ffdb00'/><rect y='32' width='64' height='32' fill='%230056b3'/></svg>"
+    />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.maptiler.com/maptiler-sdk-js/v3.6.1/maptiler-sdk.umd.min.js"></script>
+    <link
+      href="https://cdn.maptiler.com/maptiler-sdk-js/v3.6.1/maptiler-sdk.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.maptiler.com/leaflet-maptilersdk/v4.1.0/leaflet-maptilersdk.umd.min.js"></script>
+
+    <style>
+      :root {
+        --bg: #0e1624;
+        --panel: #121c2d;
+        --muted: #94a3b8;
+        --text: #e6eef8;
+        --accent-yellow: #ffdb00; /* UA flag */
+        --accent-blue: #0056b3; /* UA flag */
+        --ring: rgba(255, 219, 0, 0.25);
+        --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        --radius: 16px;
+        --maxw: 1100px;
+      }
+      html,
+      body {
+        height: 100%;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu,
+          Cantarell, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans",
+          sans-serif;
+        background: radial-gradient(
+            1200px 600px at 10% -10%,
+            rgba(0, 86, 179, 0.35),
+            transparent
+          ),
+          radial-gradient(
+            1200px 600px at 120% 10%,
+            rgba(255, 219, 0, 0.15),
+            transparent
+          ),
+          var(--bg);
+        color: var(--text);
+        line-height: 1.6;
+      }
+      a {
+        color: inherit;
+      }
+      .container {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+      #go_to_map {
+        cursor: pointer;
+      }
+      .skip-link {
+        position: absolute;
+        left: -999px;
+        top: auto;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+      }
+
+      .skip-link:focus {
+        left: 12px;
+        top: 12px;
+        width: auto;
+        height: auto;
+        padding: 10px 14px;
+        background: #000;
+        color: #fff;
+        border-radius: 10px;
+      }
+
+      header {
+        top: 0;
+        width: 100%;
+        display: flex;
+        justify-content: left;
+        align-items: center;
+        z-index: 50;
+        backdrop-filter: blur(8px);
+        background: linear-gradient(
+          180deg,
+          rgba(14, 22, 36, 0.85),
+          rgba(14, 22, 36, 0.55)
+        );
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 14px 0;
+      }
+      #map {
+        height: 100vh;
+        width: 100%;
+        z-index: 0;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+      }
+      .flag {
+        width: 28px;
+        height: 20px;
+        border-radius: 3px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+      }
+      .flag i {
+        display: block;
+        height: 50%;
+      }
+      .flag .y {
+        background: var(--accent-yellow);
+      }
+      .flag .b {
+        background: var(--accent-blue);
+      }
+      .nav a.btn {
+        margin-left: 10px;
+      }
+      nav ul {
+        display: flex;
+        list-style: none;
+        align-items: center;
+
+        gap: 14px;
+        padding: 0;
+        margin: 0;
+      }
+      nav a {
+        padding: 8px 10px;
+        border-radius: 10px;
+        text-decoration: none;
+        color: var(--muted);
+      }
+      nav a:hover {
+        background: rgba(255, 255, 255, 0.06);
+        color: var(--text);
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 16px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        text-decoration: none;
+        font-weight: 600;
+        box-shadow: var(--shadow);
+        transition: transform 0.05s ease-in;
+      }
+      .btn.primary {
+        background: linear-gradient(
+          90deg,
+          var(--accent-yellow),
+          #ffd200 50%,
+          #ffd400
+        );
+        color: #1b1b1b;
+      }
+      .btn.ghost {
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+      }
+      .btn:active {
+        transform: translateY(1px);
+      }
+
+      /* Hero */
+      .hero {
+        top: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+        height: 100vh;
+        width: 100%;
+        padding: 64px 0 40px;
+        animation: ease;
+        z-index: 50;
+        backdrop-filter: blur(8px);
+        transition: top 0.5s ease;
+        background: linear-gradient(
+          180deg,
+          rgba(14, 22, 36, 0.85),
+          rgba(14, 22, 36, 0.55)
+        );
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .hero .wrap {
+        display: grid;
+        grid-template-columns: 1.2fr 0.8fr;
+        gap: 28px;
+        align-items: center;
+      }
+      .tag {
+        display: inline-block;
+        background: rgba(0, 86, 179, 0.35);
+        border: 1px solid rgba(0, 86, 179, 0.5);
+        color: #d9ecff;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: 14px;
+      }
+      h1 {
+        font-size: clamp(28px, 3.5vw, 46px);
+        line-height: 1.15;
+        margin: 16px 0;
+      }
+      .lead {
+        color: var(--muted);
+        font-size: clamp(16px, 2.1vw, 18px);
+      }
+      .cta {
+        display: flex;
+        gap: 12px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .hero-card {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 219, 0, 0.08),
+          rgba(255, 255, 255, 0.03)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow);
+      }
+      .hero-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+      .metric {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+      }
+      .metric small {
+        display: block;
+        font-weight: 400;
+        color: var(--muted);
+      }
+
+      /* Sections */
+      section {
+        padding: 54px 0;
+      }
+      .section-title {
+        font-size: clamp(22px, 2.6vw, 30px);
+        margin: 0 0 10px;
+      }
+      .buttons_year {
+        position: absolute;
+        z-index: 5;
+        width: 100%;
+        bottom: 0;
+        height: 60px;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        align-items: center;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(
+          180deg,
+          rgba(14, 22, 36, 0.85),
+          rgba(14, 22, 36, 0.55)
+        );
+        border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      }
+
+      .buttons_year button {
+        padding: 12px 16px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        text-decoration: none;
+        font-weight: 600;
+        box-shadow: var(--shadow);
+        transition: transform 0.05s ease-in;
+        cursor: pointer;
+      }
+      .section-lead {
+        color: var(--muted);
+        margin: 0 0 24px;
+      }
+
+      .grid {
+        display: grid;
+        gap: 16px;
+      }
+      .grid.cards {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: var(--radius);
+        padding: 18px;
+        box-shadow: var(--shadow);
+      }
+      .card h3 {
+        margin: 0 0 8px;
+      }
+      .card p {
+        margin: 0;
+      }
+
+      .list {
+        display: grid;
+        gap: 10px;
+      }
+      .list .item {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 12px;
+      }
+      .list .item strong {
+        display: block;
+      }
+
+      .banner {
+        margin-top: 10px;
+        background: linear-gradient(
+          90deg,
+          rgba(0, 86, 179, 0.4),
+          rgba(255, 219, 0, 0.25)
+        );
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: var(--radius);
+        padding: 18px;
+      }
+      .map_container {
+        position: absolute;
+        width: 100%;
+      }
+      /* Form */
+      form {
+        display: grid;
+        gap: 12px;
+        max-width: 640px;
+      }
+      label {
+        font-weight: 600;
+      }
+      input,
+      textarea,
+      select {
+        width: 100%;
+        padding: 12px 14px;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+      }
+      input:focus,
+      textarea:focus,
+      select:focus {
+        outline: 2px solid var(--ring);
+        outline-offset: 2px;
+      }
+      .note {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      /* Footer */
+      footer {
+        padding: 26px 0 40px;
+        color: var(--muted);
+      }
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+        align-items: center;
+      }
+
+      /* Responsive */
+      @media (max-width: 900px) {
+        .hero .wrap {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 900px) {
+        .hero .wrap {
+          grid-template-columns: 1fr;
+        }
+        .hero-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      @media (max-width: 600px) {
+        nav ul {
+          flex-direction: column;
+          gap: 8px;
+          align-items: flex-start;
+        }
+        .cta {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .btn {
+          justify-content: center;
+          width: 100%;
+        }
+        .footer-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      html,
+      body {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Skip to content</a>
+    <!-- <header>
+      <div class="container nav" role="navigation" aria-label="Main">
+        <div class="brand" aria-label="Ukraine Community home">
+          <span class="flag" aria-hidden="true"
+            ><i class="y"></i><i class="b"></i
+          ></span>
+          <span>Ukraine Community</span>
+        </div>
+        <nav aria-label="Site">
+          <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#offer">Offerings</a></li>
+            <li><a href="#events">Events</a></li>
+            <li><a class="btn ghost">Join</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header> -->
+    <div class="map_container">
+      <div class="interactive_map"></div>
+      <div class="buttons_year">
+        <button id="beforeBtn">1918</button>
+        <button id="afterBtn">2025</button>
+      </div>
+      <div id="map"></div>
+    </div>
+    <main id="main">
+      <!-- HERO -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="container wrap">
+          <div>
+            <span class="tag" aria-label="Non-commercial community"
+              >💙💛 Non‑commercial, volunteer‑run</span
+            >
+            <h1 id="hero-title">Together. Stronger. Connected.</h1>
+            <p class="lead">
+              A welcoming space for Ukrainians and friends of Ukraine—at home
+              and abroad—to connect, share culture, and support each other.
+            </p>
+            <div class="cta" role="group" aria-label="Primary actions">
+              <p id="go_to_map" class="btn primary">Learn more</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ABOUT -->
+      <section id="about" aria-labelledby="about-title">
+        <div class="container">
+          <h2 class="section-title" id="about-title">Who We Are</h2>
+          <p class="section-lead">
+            We are a non-profit, volunteer-driven community connecting
+            Ukrainians everywhere and welcoming friends of Ukraine. We share
+            culture and language, offer peer support for newcomers, and build
+            lasting friendships.
+          </p>
+          <div class="grid cards">
+            <article class="card" aria-labelledby="c1">
+              <h3 id="c1">Community & Friendship</h3>
+              <p>
+                Meet people nearby or abroad, find your circle, and stay
+                connected through gatherings and online spaces.
+              </p>
+            </article>
+            <article class="card" aria-labelledby="c2">
+              <h3 id="c2">Culture & Language</h3>
+              <p>
+                Celebrate traditions, practice Ukrainian and English, and
+                explore our shared heritage through events and resources.
+              </p>
+            </article>
+            <article class="card" aria-labelledby="c3">
+              <h3 id="c3">Support for Newcomers</h3>
+              <p>
+                Peer guidance on housing, paperwork, schools, and everyday
+                life—by people who’ve been there.
+              </p>
+            </article>
+            <article class="card" aria-labelledby="c4">
+              <h3 id="c4">Give Back</h3>
+              <p>
+                Volunteer your time or skills. Lead a meetup, mentor newcomers,
+                or help organize cultural projects.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- OFFERINGS -->
+      <section id="offer" aria-labelledby="offer-title">
+        <div class="container">
+          <h2 class="section-title" id="offer-title">What We Offer</h2>
+          <p class="section-lead">
+            Free, community-first activities—open to everyone.
+          </p>
+          <div class="list" role="list">
+            <div class="item" role="listitem">
+              <div>🎉</div>
+              <div>
+                <strong>Meetups & Celebrations</strong
+                ><span class="note"
+                  >Local gatherings, cultural holidays, and family-friendly
+                  activities.</span
+                >
+              </div>
+            </div>
+            <div class="item" role="listitem">
+              <div>🎧</div>
+              <div>
+                <strong>Online Talks & Workshops</strong
+                ><span class="note"
+                  >From career chats to wellness sessions—hosted by
+                  volunteers.</span
+                >
+              </div>
+            </div>
+            <div class="item" role="listitem">
+              <div>📚</div>
+              <div>
+                <strong>Resources</strong
+                ><span class="note"
+                  >Guides for relocation, study, and community support.</span
+                >
+              </div>
+            </div>
+            <div class="item" role="listitem">
+              <div>🗣️</div>
+              <div>
+                <strong>Language Exchange</strong
+                ><span class="note"
+                  >Practice Ukrainian, English, and Polish in small
+                  groups.</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- EVENTS -->
+      <section id="events" aria-labelledby="events-title">
+        <div class="container">
+          <h2 class="section-title" id="events-title">Upcoming Events</h2>
+          <p class="section-lead">
+            All times are Kyiv time (GMT+3). Add to your calendar after RSVP.
+          </p>
+          <div class="grid cards">
+            <article class="card" aria-labelledby="e1">
+              <h3 id="e1">Weekly Language Exchange</h3>
+              <p>Every Saturday · 18:00 · Online</p>
+              <p class="note">Beginner‑friendly groups. UA/EN/PL.</p>
+            </article>
+            <article class="card" aria-labelledby="e2">
+              <h3 id="e2">Ukrainian Cuisine Night</h3>
+              <p>First Friday · 19:00 · Local chapters</p>
+              <p class="note">Bring a dish or just your appetite.</p>
+            </article>
+            <article class="card" aria-labelledby="e3">
+              <h3 id="e3">Relocation Q&A</h3>
+              <p>Monthly · 20:00 · Online</p>
+              <p class="note">Peer tips on housing, documents, and schools.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- JOIN -->
+      <section id="join" aria-labelledby="join-title">
+        <div class="container">
+          <h2 class="section-title" id="join-title">Join the Community</h2>
+          <p class="section-lead">
+            Membership is free. Share a few details and we’ll get back to you
+            with a welcome pack and local groups.
+          </p>
+          <form
+            method="post"
+            action="#"
+            onsubmit="event.preventDefault(); this.reset(); alert('Thank you! We will contact you soon.');"
+            aria-describedby="privacy-note"
+          >
+            <div>
+              <label for="name">Full name</label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                placeholder="e.g., Iryna Kovalenko"
+                required
+              />
+            </div>
+            <div>
+              <label for="email">Email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="you@example.com"
+                required
+              />
+            </div>
+            <div>
+              <label for="city">City / Country</label>
+              <input
+                id="city"
+                name="city"
+                type="text"
+                placeholder="e.g., Lviv, Ukraine or Wrocław, Poland"
+              />
+            </div>
+            <div>
+              <label for="interest">How would you like to participate?</label>
+              <select id="interest" name="interest">
+                <option>Attend events</option>
+                <option>Join language exchange</option>
+                <option>Volunteer / organize</option>
+                <option>Offer mentoring</option>
+              </select>
+            </div>
+            <div>
+              <label for="message">Message (optional)</label>
+              <textarea
+                id="message"
+                name="message"
+                rows="4"
+                placeholder="Tell us a bit about you or your interests"
+              ></textarea>
+            </div>
+            <div>
+              <button class="btn primary" type="submit">Submit</button>
+              <span id="privacy-note" class="note"
+                >We store only what’s needed to contact you. No ads. No selling
+                data.</span
+              >
+            </div>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="container footer-grid">
+        <p>
+          © <span id="year"></span> Ukraine Community — Non‑commercial &
+          volunteer‑run.
+        </p>
+        <p>
+          <a href="#" aria-label="Community guidelines">Guidelines</a> ·
+          <a href="#" aria-label="Contact email">Contact</a> ·
+          <a href="#" aria-label="Privacy policy">Privacy</a>
+        </p>
+      </div>
+    </footer>
+
+    <script>
+      const btn = document.getElementById("go_to_map");
+      const hero = document.querySelector(".hero");
+      btn.addEventListener("click", (e) => {
+        console.log("yes");
+        hero.style.top = "-100%";
+      });
+      // Set current year
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
+    <script>
+      // Approximate bounding box of Ukraine [southWest, northEast]
+      const ukraineBounds = [
+        [44.38, 22.15], // south-west (lat, lng)
+        [52.38, 40.23], // north-east (lat, lng)
+      ];
+      const key = "40ctAjlYbSwks22PprOn";
+      // Initialize map centered on Ukraine
+      const map = L.map("map", {
+        center: [48.5, 31.5],
+        zoom: 5,
+        maxBounds: [
+          [35, 15], // юго-западная точка (примерно)
+          [60, 50], // северо-восточная точка (примерно)
+        ],
+        maxBoundsViscosity: 0, // prevent dragging outside
+      });
+
+      // Tile layer: Before the war
+      const beforeWar = L.maptiler
+        .maptilerLayer({
+          apiKey: key,
+          style:
+            "https://api.maptiler.com/maps/0198e5cb-be54-7f3f-9367-1d8ff1db14d6/style.json?key=40ctAjlYbSwks22PprOn", //optional
+        })
+        .addTo(map);
+
+      // Tile layer: Current map (example HOT style)
+
+      // Layer control to switch maps
+
+      const polygonPoints2025 = [
+        [
+          {
+            lat: 49.92733785140785,
+            lng: 37.98087691562841,
+          },
+          {
+            lat: 49.92733785140785,
+            lng: 37.98087691562841,
+          },
+          {
+            lat: 49.35852134098079,
+            lng: 37.93690477366904,
+          },
+          {
+            lat: 49.35852134098079,
+            lng: 37.93690477366904,
+          },
+          {
+            lat: 48.997012671972556,
+            lng: 38.10787870030893,
+          },
+          {
+            lat: 48.997012671972556,
+            lng: 38.10787870030893,
+          },
+          {
+            lat: 48.679019200037054,
+            lng: 38.10787870030893,
+          },
+          {
+            lat: 48.679019200037054,
+            lng: 38.10787870030893,
+          },
+          {
+            lat: 48.315210645203365,
+            lng: 37.734219318640335,
+          },
+          {
+            lat: 48.315210645203365,
+            lng: 37.734219318640335,
+          },
+          {
+            lat: 48.25675891229479,
+            lng: 37.18472022795124,
+          },
+          {
+            lat: 48.25675891229479,
+            lng: 37.18472022795124,
+          },
+          {
+            lat: 47.919362639293645,
+            lng: 36.855020773537774,
+          },
+          {
+            lat: 47.919362639293645,
+            lng: 36.855020773537774,
+          },
+          {
+            lat: 47.71290679695217,
+            lng: 36.503341355496765,
+          },
+          {
+            lat: 47.71290679695217,
+            lng: 36.503341355496765,
+          },
+          {
+            lat: 47.71290679695217,
+            lng: 35.69008270127687,
+          },
+          {
+            lat: 47.71290679695217,
+            lng: 35.69008270127687,
+          },
+          {
+            lat: 47.66855943988864,
+            lng: 34.94276393793969,
+          },
+          {
+            lat: 47.66855943988864,
+            lng: 34.920783974312144,
+          },
+          {
+            lat: 47.475951691527236,
+            lng: 34.17346521097496,
+          },
+          {
+            lat: 47.475951691527236,
+            lng: 34.17346521097496,
+          },
+          {
+            lat: 46.99882060626516,
+            lng: 33.623966120285864,
+          },
+          {
+            lat: 46.99882060626516,
+            lng: 33.623966120285864,
+          },
+          {
+            lat: 46.65322750141634,
+            lng: 33.1184269568519,
+          },
+          {
+            lat: 46.65322750141634,
+            lng: 33.1184269568519,
+          },
+          {
+            lat: 46.547605897332666,
+            lng: 32.327148266259584,
+          },
+          {
+            lat: 46.547605897332666,
+            lng: 32.327148266259584,
+          },
+          {
+            lat: 46.66829949453555,
+            lng: 31.667749357432655,
+          },
+          {
+            lat: 46.683367286168505,
+            lng: 31.645769393805114,
+          },
+          {
+            lat: 46.607986311863925,
+            lng: 30.744590885074963,
+          },
+          {
+            lat: 46.607986311863925,
+            lng: 30.744590885074963,
+          },
+          {
+            lat: 45.863691388901444,
+            lng: 30.107171939875613,
+          },
+          {
+            lat: 45.863691388901444,
+            lng: 30.107171939875613,
+          },
+          {
+            lat: 45.46465852651876,
+            lng: 29.447773031048687,
+          },
+          {
+            lat: 45.46465852651876,
+            lng: 29.447773031048687,
+          },
+          {
+            lat: 45.294980637006354,
+            lng: 28.54659452231858,
+          },
+          {
+            lat: 45.294980637006354,
+            lng: 28.54659452231858,
+          },
+          {
+            lat: 45.46465852651876,
+            lng: 28.216895067905117,
+          },
+          {
+            lat: 45.46465852651876,
+            lng: 28.216895067905117,
+          },
+          {
+            lat: 45.78717518458622,
+            lng: 28.502634595063455,
+          },
+          {
+            lat: 45.78717518458622,
+            lng: 28.502634595063455,
+          },
+          {
+            lat: 46.24469508352902,
+            lng: 28.9642138312423,
+          },
+          {
+            lat: 46.24469508352902,
+            lng: 28.9642138312423,
+          },
+          {
+            lat: 46.562707304384524,
+            lng: 29.00817375849742,
+          },
+          {
+            lat: 46.562707304384524,
+            lng: 29.00817375849742,
+          },
+          {
+            lat: 46.562707304384524,
+            lng: 29.33787321291089,
+          },
+          {
+            lat: 46.562707304384524,
+            lng: 29.359853176538433,
+          },
+          {
+            lat: 46.441778371905585,
+            lng: 29.66757266732431,
+          },
+          {
+            lat: 46.441778371905585,
+            lng: 29.66757266732431,
+          },
+          {
+            lat: 46.42664334173121,
+            lng: 30.063212012620493,
+          },
+          {
+            lat: 46.42664334173121,
+            lng: 30.063212012620493,
+          },
+          {
+            lat: 46.773685812080956,
+            lng: 29.953312194482656,
+          },
+          {
+            lat: 46.788724196996746,
+            lng: 29.953312194482656,
+          },
+          {
+            lat: 47.04373419272684,
+            lng: 29.535692885558934,
+          },
+          {
+            lat: 47.04373419272684,
+            lng: 29.535692885558934,
+          },
+          {
+            lat: 47.38681683736479,
+            lng: 29.46975299467627,
+          },
+          {
+            lat: 47.37194635033076,
+            lng: 29.46975299467627,
+          },
+          {
+            lat: 47.57975158025091,
+            lng: 29.162033503890342,
+          },
+          {
+            lat: 47.57975158025091,
+            lng: 29.162033503890342,
+          },
+          {
+            lat: 47.9487893286267,
+            lng: 29.184013467517932,
+          },
+          {
+            lat: 47.9487893286267,
+            lng: 29.184013467517932,
+          },
+          {
+            lat: 48.183600161645906,
+            lng: 28.700454267711503,
+          },
+          {
+            lat: 48.183600161645906,
+            lng: 28.700454267711503,
+          },
+          {
+            lat: 48.22750795809436,
+            lng: 28.304814922415364,
+          },
+          {
+            lat: 48.22750795809436,
+            lng: 28.304814922415364,
+          },
+          {
+            lat: 48.47560807012487,
+            lng: 27.60145608633331,
+          },
+          {
+            lat: 48.47560807012487,
+            lng: 27.60145608633331,
+          },
+          {
+            lat: 48.41734023929179,
+            lng: 26.89809725025125,
+          },
+          {
+            lat: 48.41734023929179,
+            lng: 26.89809725025125,
+          },
+          {
+            lat: 48.051650883185886,
+            lng: 26.01889870514869,
+          },
+          {
+            lat: 48.051650883185886,
+            lng: 26.01889870514869,
+          },
+          {
+            lat: 47.81623733139521,
+            lng: 25.20564005092883,
+          },
+          {
+            lat: 47.81623733139521,
+            lng: 25.20564005092883,
+          },
+          {
+            lat: 47.757216446149144,
+            lng: 24.853960632887784,
+          },
+          {
+            lat: 47.757216446149144,
+            lng: 24.853960632887784,
+          },
+          {
+            lat: 47.9487893286267,
+            lng: 24.414361360336528,
+          },
+          {
+            lat: 47.9487893286267,
+            lng: 24.414361360336528,
+          },
+          {
+            lat: 48.00759247294076,
+            lng: 23.381303069841,
+          },
+          {
+            lat: 48.00759247294076,
+            lng: 23.381303069841,
+          },
+          {
+            lat: 48.081002232476514,
+            lng: 23.07358357905512,
+          },
+          {
+            lat: 48.081002232476514,
+            lng: 23.07358357905512,
+          },
+          {
+            lat: 48.03696893150751,
+            lng: 22.897743870034613,
+          },
+          {
+            lat: 48.24213552604336,
+            lng: 22.52408448836602,
+          },
+          {
+            lat: 48.24213552604336,
+            lng: 22.52408448836602,
+          },
+          {
+            lat: 48.49016458297529,
+            lng: 22.19438503395256,
+          },
+          {
+            lat: 48.49016458297529,
+            lng: 22.19438503395256,
+          },
+          {
+            lat: 48.70801113223242,
+            lng: 22.304284852090397,
+          },
+          {
+            lat: 48.70801113223242,
+            lng: 22.304284852090397,
+          },
+          {
+            lat: 49.0258210978181,
+            lng: 22.546064451993566,
+          },
+          {
+            lat: 49.0258210978181,
+            lng: 22.546064451993566,
+          },
+          {
+            lat: 49.04021905989364,
+            lng: 22.897743870034613,
+          },
+          {
+            lat: 49.04021905989364,
+            lng: 22.897743870034613,
+          },
+          {
+            lat: 49.255688639187916,
+            lng: 22.765864088269236,
+          },
+          {
+            lat: 49.255688639187916,
+            lng: 22.765864088269236,
+          },
+          {
+            lat: 49.58425679321881,
+            lng: 22.72190416101407,
+          },
+          {
+            lat: 49.58425679321881,
+            lng: 22.72190416101407,
+          },
+          {
+            lat: 49.95303526498078,
+            lng: 23.07358357905512,
+          },
+          {
+            lat: 49.95303526498078,
+            lng: 23.07358357905512,
+          },
+          {
+            lat: 50.36105909432888,
+            lng: 23.623082669744218,
+          },
+          {
+            lat: 50.36105909432888,
+            lng: 23.623082669744218,
+          },
+          {
+            lat: 50.431056287430614,
+            lng: 24.01872201504035,
+          },
+          {
+            lat: 50.431056287430614,
+            lng: 24.01872201504035,
+          },
+          {
+            lat: 50.765605320441594,
+            lng: 24.15060179680577,
+          },
+          {
+            lat: 50.765605320441594,
+            lng: 24.15060179680577,
+          },
+          {
+            lat: 51.097779140886054,
+            lng: 23.88684223327497,
+          },
+          {
+            lat: 51.097779140886054,
+            lng: 23.88684223327497,
+          },
+          {
+            lat: 51.37278041955835,
+            lng: 23.689022560626928,
+          },
+          {
+            lat: 51.37278041955835,
+            lng: 23.689022560626928,
+          },
+          {
+            lat: 51.673385504728294,
+            lng: 23.623082669744218,
+          },
+          {
+            lat: 51.673385504728294,
+            lng: 23.623082669744218,
+          },
+          {
+            lat: 51.64613974188771,
+            lng: 24.06268194229552,
+          },
+          {
+            lat: 51.85007648684707,
+            lng: 24.348428776831398,
+          },
+          {
+            lat: 51.85007648684707,
+            lng: 24.348428776831398,
+          },
+          {
+            lat: 51.93139646425829,
+            lng: 24.810008013010243,
+          },
+          {
+            lat: 51.93139646425829,
+            lng: 24.810008013010243,
+          },
+          {
+            lat: 51.95847043006095,
+            lng: 25.469406921837177,
+          },
+          {
+            lat: 51.95847043006095,
+            lng: 25.491386885464717,
+          },
+          {
+            lat: 51.917853352545926,
+            lng: 26.458505285077532,
+          },
+          {
+            lat: 51.90430615432429,
+            lng: 26.458505285077532,
+          },
+          {
+            lat: 51.78219739921355,
+            lng: 27.337703830180093,
+          },
+          {
+            lat: 51.78219739921355,
+            lng: 27.337703830180093,
+          },
+          {
+            lat: 51.632503296373955,
+            lng: 27.5135435392006,
+          },
+          {
+            lat: 51.57794621956989,
+            lng: 27.931162848124316,
+          },
+          {
+            lat: 51.57794621956989,
+            lng: 27.931162848124316,
+          },
+          {
+            lat: 51.632503296373955,
+            lng: 28.30482222979291,
+          },
+          {
+            lat: 51.632503296373955,
+            lng: 28.30482222979291,
+          },
+          {
+            lat: 51.53698538286292,
+            lng: 28.832341356854464,
+          },
+          {
+            lat: 51.53698538286292,
+            lng: 28.832341356854464,
+          },
+          {
+            lat: 51.618870172816436,
+            lng: 29.227980702150596,
+          },
+          {
+            lat: 51.618870172816436,
+            lng: 29.24996066577818,
+          },
+          {
+            lat: 51.49598765040688,
+            lng: 29.46976030205381,
+          },
+          {
+            lat: 51.523323572176885,
+            lng: 29.953319501860236,
+          },
+          {
+            lat: 51.523323572176885,
+            lng: 29.975299465487783,
+          },
+          {
+            lat: 51.413881449415925,
+            lng: 30.3929187744115,
+          },
+          {
+            lat: 51.413881449415925,
+            lng: 30.3929187744115,
+          },
+          {
+            lat: 51.2904451263155,
+            lng: 30.678658301569836,
+          },
+          {
+            lat: 51.2904451263155,
+            lng: 30.678658301569836,
+          },
+          {
+            lat: 51.632503296373955,
+            lng: 30.546778519804462,
+          },
+          {
+            lat: 51.632503296373955,
+            lng: 30.546778519804462,
+          },
+          {
+            lat: 51.917853352545926,
+            lng: 30.722618228824963,
+          },
+          {
+            lat: 51.917853352545926,
+            lng: 30.722618228824963,
+          },
+          {
+            lat: 52.10708526191439,
+            lng: 31.206177428631392,
+          },
+          {
+            lat: 52.10708526191439,
+            lng: 31.206177428631392,
+          },
+          {
+            lat: 52.093595231205114,
+            lng: 32.04141604647883,
+          },
+          {
+            lat: 52.093595231205114,
+            lng: 32.01943608285125,
+          },
+          {
+            lat: 52.17447422862826,
+            lng: 32.39309546451984,
+          },
+          {
+            lat: 52.17447422862826,
+            lng: 32.39309546451984,
+          },
+          {
+            lat: 52.36262124742981,
+            lng: 32.50299528265767,
+          },
+          {
+            lat: 52.36262124742981,
+            lng: 32.50299528265767,
+          },
+          {
+            lat: 52.26864754799845,
+            lng: 32.78873480981597,
+          },
+          {
+            lat: 52.26864754799845,
+            lng: 32.78873480981597,
+          },
+          {
+            lat: 52.36262124742981,
+            lng: 33.33823390050511,
+          },
+          {
+            lat: 52.36262124742981,
+            lng: 33.33823390050511,
+          },
+          {
+            lat: 52.322371237155224,
+            lng: 33.97565284570445,
+          },
+          {
+            lat: 52.322371237155224,
+            lng: 33.97565284570445,
+          },
+          {
+            lat: 52.066602928526116,
+            lng: 34.21743244560767,
+          },
+          {
+            lat: 52.066602928526116,
+            lng: 34.21743244560767,
+          },
+          {
+            lat: 51.78219739921355,
+            lng: 34.459212045510846,
+          },
+          {
+            lat: 51.468642772386715,
+            lng: 34.32732495636792,
+          },
+          {
+            lat: 51.468642772386715,
+            lng: 34.32732495636792,
+          },
+          {
+            lat: 51.207976913358166,
+            lng: 34.54712459264355,
+          },
+          {
+            lat: 51.207976913358166,
+            lng: 34.54712459264355,
+          },
+          {
+            lat: 51.152910922497625,
+            lng: 35.27246339235315,
+          },
+          {
+            lat: 51.152910922497625,
+            lng: 35.27246339235315,
+          },
+          {
+            lat: 50.80725682661879,
+            lng: 35.53622295588395,
+          },
+          {
+            lat: 50.80725682661879,
+            lng: 35.53622295588395,
+          },
+          {
+            lat: 50.50095015015178,
+            lng: 35.53622295588395,
+          },
+          {
+            lat: 50.50095015015178,
+            lng: 35.53622295588395,
+          },
+          {
+            lat: 50.431056287430614,
+            lng: 36.10770201020059,
+          },
+          {
+            lat: 50.431056287430614,
+            lng: 36.10770201020059,
+          },
+          {
+            lat: 50.29095852270968,
+            lng: 36.855020773537774,
+          },
+          {
+            lat: 50.29095852270968,
+            lng: 36.855020773537774,
+          },
+          {
+            lat: 50.36699968877318,
+            lng: 37.46745276924195,
+          },
+          {
+            lat: 50.36699968877318,
+            lng: 37.478442751055745,
+          },
+          {
+            lat: 50.11418506866975,
+            lng: 37.78616224184162,
+          },
+          {
+            lat: 50.11418506866975,
+            lng: 37.78616224184162,
+          },
+        ].map((e) => [e.lat, e.lng]),
+      ];
+      const polygonPoints1918 = [
+        { lat: 45.436631028629535, lng: 29.626272380841208 },
+        { lat: 45.436631028629535, lng: 29.582303136274643 },
+        { lat: 45.220481791813036, lng: 28.351164288410363 },
+        { lat: 45.220481791813036, lng: 28.307195043843794 },
+        { lat: 45.526224957471634, lng: 28.457820672738467 },
+        { lat: 45.526224957471634, lng: 28.457820672738467 },
+        { lat: 45.81778595500283, lng: 28.589728406438212 },
+        { lat: 45.81778595500283, lng: 28.589728406438212 },
+        { lat: 45.940094111935, lng: 28.89751311840427 },
+        { lat: 45.940094111935, lng: 28.89751311840427 },
+        { lat: 46.259872295991805, lng: 29.073390096670625 },
+        { lat: 46.259872295991805, lng: 29.073390096670625 },
+        { lat: 46.638143098322814, lng: 29.513082542336427 },
+        { lat: 46.638143098322814, lng: 29.513082542336427 },
+        { lat: 47.01378784872836, lng: 29.491097920053146 },
+        { lat: 47.01378784872836, lng: 29.491097920053146 },
+        { lat: 47.237915089563494, lng: 29.13934396352048 },
+        { lat: 47.237915089563494, lng: 29.13934396352048 },
+        { lat: 47.609362904441774, lng: 28.941482362970877 },
+        { lat: 47.609362904441774, lng: 28.941482362970877 },
+        { lat: 47.86045099635196, lng: 28.545759161871644 },
+        { lat: 47.84571462000374, lng: 28.545759161871644 },
+        { lat: 47.96348838853607, lng: 27.974158982506093 },
+        { lat: 47.96348838853607, lng: 27.974158982506093 },
+        { lat: 48.35899760543059, lng: 27.688358892823317 },
+        { lat: 48.35899760543059, lng: 27.688358892823317 },
+        { lat: 48.562876579255374, lng: 27.49049729227368 },
+        { lat: 48.562876579255374, lng: 27.49049729227368 },
+        { lat: 48.41600325087094, lng: 27.159507422628668 },
+        { lat: 48.41600325087094, lng: 27.159507422628668 },
+        { lat: 48.408714879643945, lng: 26.78576884381275 },
+        { lat: 48.408714879643945, lng: 26.78576884381275 },
+        { lat: 48.29195883722235, lng: 26.87370733294589 },
+        { lat: 48.284652701551785, lng: 26.87370733294589 },
+        { lat: 48.23348048323147, lng: 26.697830354679574 },
+        { lat: 48.23348048323147, lng: 26.697830354679574 },
+        { lat: 48.33505248317167, lng: 26.68082734853561 },
+        { lat: 48.33505248317167, lng: 26.68632350410643 },
+        { lat: 48.23641472660026, lng: 26.565408081548327 },
+        { lat: 48.23275781775098, lng: 26.559911925977506 },
+        { lat: 48.18885452394847, lng: 26.4115157255653 },
+        { lat: 48.18885452394847, lng: 26.4115157255653 },
+        { lat: 47.87518318504166, lng: 25.49010008706017 },
+        { lat: 47.87518318504166, lng: 25.49010008706017 },
+        { lat: 47.505621688468906, lng: 25.072392263677646 },
+        { lat: 47.505621688468906, lng: 25.072392263677646 },
+        { lat: 47.62416631188583, lng: 24.76460755171159 },
+        { lat: 47.63896552835361, lng: 24.76460755171159 },
+        { lat: 47.91935462732763, lng: 24.544761328878668 },
+        { lat: 47.91935462732763, lng: 24.544761328878668 },
+        { lat: 47.96348838853607, lng: 23.313622481014388 },
+        { lat: 47.96348838853607, lng: 23.313622481014388 },
+        { lat: 48.22749999396454, lng: 22.50019145653267 },
+        { lat: 48.23583784284827, lng: 22.512708487782643 },
+        { lat: 48.63813867385544, lng: 21.931654581689486 },
+        { lat: 48.63813867385544, lng: 21.931654581689486 },
+        { lat: 49.10038365622673, lng: 21.799746847989738 },
+        { lat: 49.10038365622673, lng: 21.799746847989738 },
+        { lat: 49.27262529667309, lng: 22.503254761055032 },
+        { lat: 49.27262529667309, lng: 22.503254761055032 },
+        { lat: 49.67219275402092, lng: 22.942947206720877 },
+        { lat: 49.67219275402092, lng: 22.942947206720877 },
+        { lat: 50.20925682597959, lng: 23.602485875219568 },
+        { lat: 50.20925682597959, lng: 23.602485875219568 },
+        { lat: 50.656884633603255, lng: 22.98691645128745 },
+        { lat: 50.656884633603255, lng: 22.98691645128745 },
+        { lat: 50.57327670236437, lng: 23.9982090763188 },
+        { lat: 50.57327670236437, lng: 23.9982090763188 },
+        { lat: 51.23798526457769, lng: 23.778362853485916 },
+        { lat: 51.23798526457769, lng: 23.778362853485916 },
+        { lat: 51.62135672525518, lng: 23.514547386086427 },
+        { lat: 51.648617381974, lng: 23.514547386086427 },
+        { lat: 51.94740413601061, lng: 22.942947206720877 },
+        { lat: 51.94740413601061, lng: 22.942947206720877 },
+        { lat: 52.16346132814137, lng: 23.778362853485916 },
+        { lat: 52.16346132814137, lng: 23.778362853485916 },
+        { lat: 51.974468441218946, lng: 24.525840011117786 },
+        { lat: 51.974468441218946, lng: 24.525840011117786 },
+        { lat: 52.43206507790145, lng: 25.27331716874969 },
+        { lat: 52.43206507790145, lng: 25.27331716874969 },
+        { lat: 52.43206507790145, lng: 26.37254828291422 },
+        { lat: 52.43206507790145, lng: 26.37254828291422 },
+        { lat: 51.87720687687079, lng: 27.094977513740393 },
+        { lat: 51.87720687687079, lng: 27.094977513740393 },
+        { lat: 51.72782789472613, lng: 27.534669959406198 },
+        { lat: 51.72782789472613, lng: 27.534669959406198 },
+        { lat: 51.9178607262896, lng: 27.820470049088975 },
+        { lat: 51.93140383577746, lng: 27.820470049088975 },
+        { lat: 51.95847779713189, lng: 28.414054850737813 },
+        { lat: 51.95847779713189, lng: 28.414054850737813 },
+        { lat: 51.78220479521635, lng: 28.809778051837046 },
+        { lat: 51.768616708105625, lng: 28.809778051837046 },
+        { lat: 51.53699281899605, lng: 29.16153200836971 },
+        { lat: 51.53699281899605, lng: 29.16153200836971 },
+        { lat: 51.386487352578165, lng: 29.425347475769208 },
+        { lat: 51.386487352578165, lng: 29.425347475769208 },
+        { lat: 51.495995093236274, lng: 29.865039921435013 },
+        { lat: 51.495995093236274, lng: 29.865039921435013 },
+        { lat: 51.468642772386715, lng: 30.19480925568435 },
+        { lat: 51.468642772386715, lng: 30.19480925568435 },
+        { lat: 51.23548524590736, lng: 30.568547834500304 },
+        { lat: 51.23548524590736, lng: 30.568547834500304 },
+        { lat: 51.768616708105625, lng: 30.87633254646636 },
+        { lat: 51.768616708105625, lng: 30.87633254646636 },
+        { lat: 52.053108007096775, lng: 31.31602499213221 },
+        { lat: 52.053108007096775, lng: 31.33800961441549 },
+        { lat: 52.09360257605073, lng: 31.93159441606433 },
+        { lat: 52.09360257605073, lng: 31.93159441606433 },
+        { lat: 52.2820918936404, lng: 32.283348372597 },
+        { lat: 52.2820918936404, lng: 32.283348372597 },
+        { lat: 52.46978283052211, lng: 31.843655926931152 },
+        { lat: 52.46978283052211, lng: 31.843655926931152 },
+        { lat: 52.69662190495839, lng: 31.93159441606433 },
+        { lat: 52.69662190495839, lng: 31.93159441606433 },
+        { lat: 52.70992883636904, lng: 32.41525610629674 },
+        { lat: 52.70992883636904, lng: 32.41525610629674 },
+        { lat: 52.93552635691374, lng: 32.81097930739594 },
+        { lat: 52.93552635691374, lng: 32.82267192458345 },
+        { lat: 53.02807925814399, lng: 33.270801640185006 },
+        { lat: 53.02807925814399, lng: 33.270801640185006 },
+        { lat: 52.829508711036574, lng: 33.57858635215107 },
+        { lat: 52.829508711036574, lng: 33.57858635215107 },
+        { lat: 53.04128491910636, lng: 33.84240181955056 },
+        { lat: 53.04128491910636, lng: 33.84240181955056 },
+        { lat: 52.97521616446735, lng: 34.2381250206498 },
+        { lat: 52.97521616446735, lng: 34.2381250206498 },
+        { lat: 52.72323171065556, lng: 34.282094265216365 },
+        { lat: 52.72323171065556, lng: 34.282094265216365 },
+        { lat: 52.48315881191586, lng: 34.040263420100196 },
+        { lat: 52.48315881191586, lng: 34.040263420100196 },
+        { lat: 52.241768582559, lng: 33.820417197267275 },
+        { lat: 52.241768582559, lng: 33.820417197267275 },
+        { lat: 51.98553541817526, lng: 34.172171153799944 },
+        { lat: 51.98553541817526, lng: 34.172171153799944 },
+        { lat: 51.822944511049464, lng: 34.56789435489914 },
+        { lat: 51.822944511049464, lng: 34.56789435489914 },
+        { lat: 51.48232098348017, lng: 34.21614039836651 },
+        { lat: 51.48232098348017, lng: 34.21614039836651 },
+        { lat: 51.249233247983355, lng: 34.304078887499685 },
+        { lat: 51.249233247983355, lng: 34.304078887499685 },
+        { lat: 51.194216582014256, lng: 34.94163293371509 },
+        { lat: 51.194216582014256, lng: 34.94163293371509 },
+        { lat: 51.50966510210621, lng: 35.22743302339787 },
+        { lat: 51.50966510210621, lng: 35.22743302339787 },
+        { lat: 51.55065052792228, lng: 35.66712546906368 },
+        { lat: 51.55065052792228, lng: 35.66712546906368 },
+        { lat: 51.29045260265905, lng: 35.79903320276342 },
+        { lat: 51.29045260265905, lng: 35.79903320276342 },
+        { lat: 51.028771853757576, lng: 35.79903320276342 },
+        { lat: 51.028771853757576, lng: 35.79903320276342 },
+        { lat: 50.73781703197088, lng: 35.57918697993053 },
+        { lat: 50.73781703197088, lng: 35.57918697993053 },
+        { lat: 50.51491652732476, lng: 35.86498706961331 },
+        { lat: 50.51491652732476, lng: 35.86498706961331 },
+        { lat: 50.31901115983749, lng: 36.59047960496189 },
+        { lat: 50.31901115983749, lng: 36.59047960496189 },
+        { lat: 50.40306981254347, lng: 37.557802985426676 },
+        { lat: 50.40306981254347, lng: 37.557802985426676 },
+        { lat: 50.30498690960714, lng: 38.56909561045803 },
+        { lat: 50.30498690960714, lng: 38.56909561045803 },
+        { lat: 50.45902622945074, lng: 39.16268041210691 },
+        { lat: 50.45902622945074, lng: 39.16268041210691 },
+        { lat: 50.06850448446011, lng: 39.82713712028805 },
+        { lat: 50.06850448446011, lng: 39.82713712028805 },
+        { lat: 50.545374362361756, lng: 40.53064503335335 },
+        { lat: 50.51745550228307, lng: 40.53064503335335 },
+        { lat: 50.68472092505803, lng: 41.36606068011839 },
+        { lat: 50.68472092505803, lng: 41.36606068011839 },
+        { lat: 50.181139483418185, lng: 41.322091435551826 },
+        { lat: 50.181139483418185, lng: 41.322091435551826 },
+        { lat: 49.67219275402092, lng: 40.79446050075284 },
+        { lat: 49.67219275402092, lng: 40.79446050075284 },
+        { lat: 49.215278033350074, lng: 40.17889107682072 },
+        { lat: 49.186579424069336, lng: 40.17889107682072 },
+        { lat: 48.66715413260676, lng: 39.82713712028805 },
+        { lat: 48.66715413260676, lng: 39.82713712028805 },
+        { lat: 48.63813867385544, lng: 40.618583522486524 },
+        { lat: 48.63813867385544, lng: 40.618583522486524 },
+        { lat: 48.20090174699352, lng: 40.97033747901919 },
+        { lat: 48.20090174699352, lng: 40.97033747901919 },
+        { lat: 47.61206288638896, lng: 41.14621445728551 },
+        { lat: 47.58244502651826, lng: 41.14621445728551 },
+        { lat: 47.1062780559822, lng: 40.354768055087035 },
+        { lat: 47.1062780559822, lng: 40.354768055087035 },
+        { lat: 46.71622796841304, lng: 41.014306723585754 },
+        { lat: 46.71622796841304, lng: 41.014306723585754 },
+        { lat: 46.23226755837676, lng: 41.89369161491737 },
+        { lat: 46.23226755837676, lng: 41.89369161491737 },
+        { lat: 45.65197218895764, lng: 41.93766085948394 },
+        { lat: 45.62126205623695, lng: 41.93766085948394 },
+        { lat: 44.50448646336275, lng: 41.89369161491737 },
+        { lat: 44.50448646336275, lng: 41.89369161491737 },
+        { lat: 44.316236204358084, lng: 40.750491256186265 },
+        { lat: 44.316236204358084, lng: 40.750491256186265 },
+        { lat: 43.811273806379965, lng: 40.17889107682072 },
+        { lat: 43.811273806379965, lng: 40.17889107682072 },
+        { lat: 43.045757980208926, lng: 40.17889107682072 },
+        { lat: 43.045757980208926, lng: 40.17889107682072 },
+        { lat: 44.09584516142543, lng: 38.77187525069013 },
+        { lat: 44.09584516142543, lng: 38.77187525069013 },
+        { lat: 44.87916908012176, lng: 37.14501320172661 },
+        { lat: 44.87916908012176, lng: 37.10104395716 },
+        { lat: 45.313234993626196, lng: 35.166397196230434 },
+        { lat: 45.313234993626196, lng: 35.166397196230434 },
+        { lat: 45.25142758736917, lng: 34.155104571199075 },
+        { lat: 45.25142758736917, lng: 34.155104571199075 },
+        { lat: 45.40581985252138, lng: 33.055873457034544 },
+        { lat: 45.40581985252138, lng: 33.055873457034544 },
+        { lat: 45.64697881556765, lng: 33.10477421688109 },
+        { lat: 45.64697881556765, lng: 33.10477421688109 },
+        { lat: 45.8691438221662, lng: 33.555458973688545 },
+        { lat: 45.8691438221662, lng: 33.555458973688545 },
+        { lat: 46.075192040284605, lng: 33.45652817341372 },
+        { lat: 46.075192040284605, lng: 33.45652817341372 },
+        { lat: 46.1284868224934, lng: 33.049812661172844 },
+        { lat: 46.1284868224934, lng: 33.049812661172844 },
+        { lat: 46.1284868224934, lng: 32.379281681532476 },
+        { lat: 46.1284868224934, lng: 32.379281681532476 },
+        { lat: 46.24251646131192, lng: 32.01653541385821 },
+        { lat: 46.24251646131192, lng: 32.01653541385821 },
+        { lat: 46.432040298079386, lng: 31.961573858149954 },
+        { lat: 46.432040298079386, lng: 31.961573858149954 },
+        { lat: 46.61336528631641, lng: 31.433942923350973 },
+        { lat: 46.61336528631641, lng: 31.433942923350973 },
+        { lat: 46.59073275742828, lng: 30.774404254852282 },
+        { lat: 46.59073275742828, lng: 30.774404254852282 },
+        { lat: 45.8691438221662, lng: 30.09288096407027 },
+        { lat: 45.8614976843806, lng: 30.09288096407027 },
+      ].map((e) => [e.lat, e.lng]);
+
+      const myPolygon1 = L.polygon(polygonPoints1918, {
+        color: "#46C767",
+        fillColor: "#46C767",
+        fillOpacity: 0.15,
+        weight: 2,
+      });
+      const marker = L.marker([50.45, 30.52]).addTo(map);
+      const myPolygon2 = L.polygon(polygonPoints2025, {
+        color: "#46C767",
+        fillColor: "#46C767",
+        fillOpacity: 0.15,
+        weight: 2,
+      });
+      myPolygon2.addTo(map);
+      document.getElementById("beforeBtn").onclick = () => {
+        myPolygon2.remove();
+        myPolygon1.addTo(map);
+      };
+      document.getElementById("afterBtn").onclick = () => {
+        myPolygon1.remove();
+        myPolygon2.addTo(map);
+      };
+      myPolygon1.bindPopup("1918");
+      marker.bindPopup(
+        `
+            <div style="text-align:center;">
+              <img src="https://anga.ua/files/anga/reg_images/screenshot_1_0046.png"
+                   alt="Kyiv"
+                   class="popup-img"/>
+              <h3 style="margin:2px 0;">Kyiv</h3>
+
+              <a href="https://uk.wikipedia.org/wiki/%D0%9A%D0%B8%D1%97%D0%B2"><p>Capital of Ukraine 🇺🇦</p></a>
+            </div>
+          `,
+        { className: "custom-popup" }
+      );
+
+      const drawnFeatures = new L.FeatureGroup();
+      map.addLayer(drawnFeatures);
+      map.on("draw:created", function (e) {
+        console.log(e);
+      });
+    </script>
+  </body>
+</html>
