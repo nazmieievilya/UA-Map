@@ -418,6 +418,14 @@ footer {
 .mySwiper3 {
   overflow: hidden;
 }
+.mySwiper4 {
+  overflow: hidden;
+}
+.popup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .years_header {
   font-style: italic;
   padding: 0;
