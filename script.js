@@ -1,9 +1,82 @@
 import { maps, routs } from "./maps.js";
 const btn = document.getElementById("go_to_map");
 const hero = document.querySelector(".hero");
+const typesofmaps = document.querySelector(".types_of_maps_container");
+const openTypes = document.querySelector(".open_types_of_maps");
+const container = document.querySelector(".types_of_maps_container");
+const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+const churches = routs.map((rout) => {
+  return maps[rout].churches;
+});
+let swiperState = [0];
+const polygons = routs.map((rout) => {
+  return L.polygon(maps[rout].map, {
+    color: "#46C767",
+    fillColor: "#46C767",
+    fillOpacity: 0.15,
+    weight: 2,
+  });
+});
+console.log(polygons);
+let typesOfMapsState = {
+  borders: true,
+  churches: false,
+  people: false,
+};
+let typesOfMapstoggle = true;
 btn.addEventListener("click", (e) => {
   console.log("yes");
   hero.style.top = "-120%";
+});
+
+const typesDrawer = (state, date) => {
+  myGroup.clearLayers();
+  if (state.borders) {
+    myGroup.addLayer(polygons[date]);
+  }
+  if (state.churches) {
+    churches[date].forEach((c) => {
+      myGroup.addLayer(L.marker([c[0], c[1]]).bindPopup(c[2]));
+    });
+  }
+  if (state.people) console.log("people");
+};
+
+const borderHandler = (state, date) => {
+  typesOfMapsState.borders = state;
+  typesDrawer(typesOfMapsState, date);
+};
+const churchesHandler = (state, date) => {
+  typesOfMapsState.churches = state;
+  typesDrawer(typesOfMapsState, date);
+};
+const peopleHandler = (state, date) => {
+  typesOfMapsState.people = state;
+  typesDrawer(typesOfMapsState, date);
+};
+
+openTypes.addEventListener("click", (e) => {
+  typesOfMapstoggle = !typesOfMapstoggle;
+  if (typesOfMapstoggle) {
+    typesofmaps.style.top = "0";
+    openTypes.style.transform = "rotate(-90deg)";
+  }
+  if (!typesOfMapstoggle) {
+    typesofmaps.style.top = "-135px";
+    openTypes.style.transform = "rotate(90deg)";
+  }
+  console.log(typesOfMapstoggle);
+});
+
+container.addEventListener("change", (e) => {
+  if (e.target.type === "checkbox") {
+    if (e.target.value == "Borders")
+      return borderHandler(e.target.checked, swiperState);
+    if (e.target.value == "Churches")
+      return churchesHandler(e.target.checked, swiperState);
+    if (e.target.value == "People")
+      return peopleHandler(e.target.checked, swiperState);
+  }
 });
 // Set current year
 document.getElementById("year").textContent = new Date().getFullYear();
@@ -47,7 +120,7 @@ map.addLayer(drawnFeatures);
 map.on("draw:created", function (e) {
   console.log(e);
 });
-let swiperState = [0, 0];
+
 const swiper = new Swiper(".mySwiper", {
   pagination: {
     el: ".swiper-pagination",
@@ -59,103 +132,42 @@ const swiper = new Swiper(".mySwiper", {
   },
 });
 
-const swiper2 = new Swiper(".mySwiper2", {
-  direction: "vertical",
-  pagination: {
-    el: ".swiper-pagination",
-    clickable: true,
-  },
-  navigation: {
-    nextEl: ".button_up",
-    prevEl: ".button_down",
-  },
-});
-
-const swiper3 = new Swiper(".mySwiper3", {
-  direction: "vertical",
-  pagination: {
-    el: ".swiper-pagination",
-    clickable: true,
-  },
-  navigation: {
-    nextEl: ".button_up",
-    prevEl: ".button_down",
-  },
-});
-
-const polygons = routs.map((rout) => {
-  return L.polygon(maps[rout].map, {
-    color: "#46C767",
-    fillColor: "#46C767",
-    fillOpacity: 0.15,
-    weight: 2,
-  });
-});
-const churches = routs.map((rout) => {
-  return maps[rout].churches;
-});
 swiper.on("slideChange", function () {
   swiperState[0] = swiper.activeIndex;
   console.log(swiperState);
-  myGroup.clearLayers();
-  if (swiperState[1] == 0) {
-    myGroup.addLayer(polygons[swiperState[0]]);
-  }
-  if (swiperState[1] == 1) {
-    churches[swiperState[0]].forEach((coord) => {
-      const marker = L.marker([coord[0], coord[1]]);
-      myGroup.addLayer(marker);
-    });
-  }
+  typesDrawer(typesOfMapsState, swiperState);
 });
-swiper2.on("slideChange", function () {
-  swiperState[1] = swiper2.activeIndex;
-  console.log(swiperState);
-  myGroup.clearLayers();
-  if (swiperState[1] == 0) {
-    myGroup.addLayer(polygons[swiperState[0]]);
-  }
-  if (swiperState[1] == 1) {
-    churches[swiperState[0]].forEach((coord) => {
-      const marker = L.marker([coord[0], coord[1]]);
-      myGroup.addLayer(marker);
-    });
-  }
-});
-
-swiper2.controller.control = [swiper3];
-swiper3.controller.control = [swiper2];
 
 // Golda Meir – Kyiv
-L.marker([50.45, 30.8233])
-  .addTo(map)
-  .bindPopup(
-    `<div class="popup"><h3>Golda Meir</h3><p>Born in Kyiv<br>One of the founders of the State of Israel.</p>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Golda_Meir_%281964%29_cropped.jpg/800px-Golda_Meir_%281964%29_cropped.jpg" alt="Portrait of Golda Meir" style="width: 150px; height:auto; margin-bottom:8px;"></div>`
-  );
+// L.marker([50.45, 30.8233])
+//   .addTo(map)
+//   .bindPopup(
+//     `<div class="popup"><h3>Golda Meir</h3><p>Born in Kyiv<br>One of the founders of the State of Israel.</p>
+//     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Golda_Meir_%281964%29_cropped.jpg/800px-Golda_Meir_%281964%29_cropped.jpg" alt="Portrait of Golda Meir" style="width: 150px; height:auto; margin-bottom:8px;"></div>`
+//   );
 
-// Moshe Sharett – Kherson
-L.marker([46.6558, 32.6178])
-  .addTo(map)
-  .bindPopup(
-    `<div class="popup"><h3>Moshe Sharett</h3><p>Born in Kherson<br>Prime Minister of Israel (1954–1955).</p>
-    <img src="https://m.knesset.gov.il/About/Lexicon/PublishingImages/sharett_1.jpg" alt="Portrait of Golda Meir" style="width: 150px; height:auto; margin-bottom:8px;"></div>`
-  );
+// // Moshe Sharett – Kherson
+// L.marker([46.6558, 32.6178])
+//   .addTo(map)
+//   .bindPopup(
+//     `<div class="popup"><h3>Moshe Sharett</h3><p>Born in Kherson<br>Prime Minister of Israel (1954–1955).</p>
+//     <img src="https://m.knesset.gov.il/About/Lexicon/PublishingImages/sharett_1.jpg" alt="Portrait of Golda Meir" style="width: 150px; height:auto; margin-bottom:8px;"></div>`
+//   );
 
-// Ephraim Katzir – Kyiv
+// // Ephraim Katzir – Kyiv
 
-// Yitzhak Ben-Zvi – Poltava
-L.marker([49.5937, 34.5407])
-  .addTo(map)
-  .bindPopup(
-    `<div class="popup"><h3>Yitzhak Ben-Zvi</h3><p>Born in Poltava<br>President of Israel (1952–1963).</p>
-     <img src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Yitzhak_Ben-Zvi.jpg" alt="Portrait of Golda Meir" style="width: 150px; height:auto; margin-bottom:8px;"></div>`
-  );
+// // Yitzhak Ben-Zvi – Poltava
+// L.marker([49.5937, 34.5407])
+//   .addTo(map)
+//   .bindPopup(
+//     `<div class="popup"><h3>Yitzhak Ben-Zvi</h3><p>Born in Poltava<br>President of Israel (1952–1963).</p>
+//      <img src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Yitzhak_Ben-Zvi.jpg" alt="Portrait of Golda Meir" style="width: 150px; height:auto; margin-bottom:8px;"></div>`
+//   );
 
-// Antony Blinken – Pereiaslav (Kyiv oblast)
-L.marker([50.452, 30.68])
-  .addTo(map) // Approximate coords for Pereiaslav
-  .bindPopup(
-    `<div class="popup"><h3>Antony Blinken</h3><p>Great-grandson of Meir Blinken, a native of Pereiaslav (Kyiv oblast)<br>U.S. Secretary of State, of Ukrainian-Jewish descent.</p>
-     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Secretary_Blinken%27s_Official_Department_Photo.jpg/250px-Secretary_Blinken%27s_Official_Department_Photo.jpg" alt="Portrait of Golda Meir" style="width: 150px; height:auto; margin-bottom:8px;"></div>`
-  );
+// // Antony Blinken – Pereiaslav (Kyiv oblast)
+// L.marker([50.452, 30.68])
+//   .addTo(map) // Approximate coords for Pereiaslav
+//   .bindPopup(
+//     `<div class="popup"><h3>Antony Blinken</h3><p>Great-grandson of Meir Blinken, a native of Pereiaslav (Kyiv oblast)<br>U.S. Secretary of State, of Ukrainian-Jewish descent.</p>
+//      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Secretary_Blinken%27s_Official_Department_Photo.jpg/250px-Secretary_Blinken%27s_Official_Department_Photo.jpg" alt="Portrait of Golda Meir" style="width: 150px; height:auto; margin-bottom:8px;"></div>`
+//   );
