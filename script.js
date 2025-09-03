@@ -107,6 +107,7 @@ const map = L.map("map", {
     [35, 15], // юго-западная точка (примерно)
     [60, 50], // северо-восточная точка (примерно)
   ],
+  minZoom: 4,
   maxBoundsViscosity: 0, // prevent dragging outside
 });
 
