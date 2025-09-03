@@ -8,6 +8,10 @@ const checkboxes = container.querySelectorAll('input[type="checkbox"]');
 const churches = routs.map((rout) => {
   return maps[rout].churches;
 });
+
+const people = routs.map((rout) => {
+  return maps[rout].people;
+});
 let swiperState = [0];
 const polygons = routs.map((rout) => {
   return L.polygon(maps[rout].map, {
@@ -39,7 +43,19 @@ const typesDrawer = (state, date) => {
       myGroup.addLayer(L.marker([c[0], c[1]]).bindPopup(c[2]));
     });
   }
-  if (state.people) console.log("people");
+  if (state.people) {
+    people[date].forEach((p) => {
+      myGroup.addLayer(
+        L.marker(p[0])
+          .addTo(map)
+          .bindPopup(
+            `<div class="popup"  style="height: 260px"><h3>${p[1]}</h3><p>${p[2]}<br>${p[3]}</p>
+     <img src="${p[4]}" alt="Portrait of Golda Meir" style="width: auto; height: 150px; margin-bottom:8px;"></div>`
+          )
+          .openPopup()
+      );
+    });
+  }
 };
 
 const borderHandler = (state, date) => {
@@ -137,37 +153,3 @@ swiper.on("slideChange", function () {
   console.log(swiperState);
   typesDrawer(typesOfMapsState, swiperState);
 });
-
-// Golda Meir – Kyiv
-// L.marker([50.45, 30.8233])
-//   .addTo(map)
-//   .bindPopup(
-//     `<div class="popup"><h3>Golda Meir</h3><p>Born in Kyiv<br>One of the founders of the State of Israel.</p>
-//     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Golda_Meir_%281964%29_cropped.jpg/800px-Golda_Meir_%281964%29_cropped.jpg" alt="Portrait of Golda Meir" style="width: 150px; height:auto; margin-bottom:8px;"></div>`
-//   );
-
-// // Moshe Sharett – Kherson
-// L.marker([46.6558, 32.6178])
-//   .addTo(map)
-//   .bindPopup(
-//     `<div class="popup"><h3>Moshe Sharett</h3><p>Born in Kherson<br>Prime Minister of Israel (1954–1955).</p>
-//     <img src="https://m.knesset.gov.il/About/Lexicon/PublishingImages/sharett_1.jpg" alt="Portrait of Golda Meir" style="width: 150px; height:auto; margin-bottom:8px;"></div>`
-//   );
-
-// // Ephraim Katzir – Kyiv
-
-// // Yitzhak Ben-Zvi – Poltava
-// L.marker([49.5937, 34.5407])
-//   .addTo(map)
-//   .bindPopup(
-//     `<div class="popup"><h3>Yitzhak Ben-Zvi</h3><p>Born in Poltava<br>President of Israel (1952–1963).</p>
-//      <img src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Yitzhak_Ben-Zvi.jpg" alt="Portrait of Golda Meir" style="width: 150px; height:auto; margin-bottom:8px;"></div>`
-//   );
-
-// // Antony Blinken – Pereiaslav (Kyiv oblast)
-// L.marker([50.452, 30.68])
-//   .addTo(map) // Approximate coords for Pereiaslav
-//   .bindPopup(
-//     `<div class="popup"><h3>Antony Blinken</h3><p>Great-grandson of Meir Blinken, a native of Pereiaslav (Kyiv oblast)<br>U.S. Secretary of State, of Ukrainian-Jewish descent.</p>
-//      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Secretary_Blinken%27s_Official_Department_Photo.jpg/250px-Secretary_Blinken%27s_Official_Department_Photo.jpg" alt="Portrait of Golda Meir" style="width: 150px; height:auto; margin-bottom:8px;"></div>`
-//   );

@@ -504,6 +504,13 @@ footer {
 .open_types {
   position: relative;
 }
+.popup h3 {
+  margin: 0;
+}
+.popup p {
+  margin: 0;
+}
+
 .open_types_of_maps {
   position: absolute;
 
