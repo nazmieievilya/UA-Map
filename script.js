@@ -9,6 +9,19 @@ const churches = routs.map((rout) => {
   return maps[rout].churches;
 });
 
+var imageUrl = "./dialects.png";
+var errorOverlayUrl = "https://cdn-icons-png.flaticon.com/512/110/110686.png";
+var altText =
+  "Image of Newark, N.J. in 1922. Source: The University of Texas at Austin, UT Libraries Map Collection.";
+var latLngBounds = L.latLngBounds([
+  [53.080689, 20.084192],
+  [44.080185, 44.021595],
+]);
+
+const greekCatholicsmarkers = routs.map((rout) => {
+  return maps[rout].greekCatholics;
+});
+
 const people = routs.map((rout) => {
   return maps[rout].people;
 });
@@ -26,6 +39,7 @@ let typesOfMapsState = {
   borders: true,
   churches: false,
   people: false,
+  greekCatholics: false,
 };
 let typesOfMapstoggle = true;
 btn.addEventListener("click", (e) => {
@@ -38,23 +52,23 @@ const typesDrawer = (state, date) => {
   if (state.borders) {
     myGroup.addLayer(polygons[date]);
   }
-  if (state.churches) {
-    churches[date].forEach((c) => {
-      myGroup.addLayer(L.marker([c[0], c[1]]).bindPopup(c[2]));
-    });
-  }
-  if (state.people) {
-    people[date].forEach((p) => {
-      myGroup.addLayer(
-        L.marker(p[0])
-          .addTo(map)
-          .bindPopup(
-            `<div class="popup"  style="height: 260px"><h3>${p[1]}</h3><p>${p[2]}<br>${p[3]}</p>
+
+  if (state.greekCatholics) {
+    greekCatholicsmarkers
+      .filter((_, i) => i <= date)
+      .filter(Array.isArray)
+      .flat()
+      .forEach((p) => {
+        myGroup.addLayer(
+          L.marker(p[0])
+            .addTo(map)
+            .bindPopup(
+              `<div class="popup"  style="height: 260px"><h3>${p[1]}</h3><p>${p[2]}<br>${p[3]}</p>
      <img src="${p[4]}" alt="Portrait of Golda Meir" style="width: auto; height: 150px; margin-bottom:8px;"></div>`
-          )
-          .openPopup()
-      );
-    });
+            )
+            .openPopup()
+        );
+      });
   }
 };
 
@@ -66,8 +80,13 @@ const churchesHandler = (state, date) => {
   typesOfMapsState.churches = state;
   typesDrawer(typesOfMapsState, date);
 };
-const peopleHandler = (state, date) => {
-  typesOfMapsState.people = state;
+const ethnolinguistic = (state, date) => {
+  if (state) return imageOverlayEthnolinguistic.addTo(map);
+  return map.removeLayer(imageOverlayEthnolinguistic);
+};
+const greekCatholicsHandler = (state, date) => {
+  console.log("greekCatholicsHandler");
+  typesOfMapsState.greekCatholics = state;
   typesDrawer(typesOfMapsState, date);
 };
 
@@ -92,6 +111,12 @@ container.addEventListener("change", (e) => {
       return churchesHandler(e.target.checked, swiperState);
     if (e.target.value == "People")
       return peopleHandler(e.target.checked, swiperState);
+    if (e.target.value == "greekCatholics")
+      return greekCatholicsHandler(e.target.checked, swiperState);
+    if (e.target.value == "greekCatholics")
+      return greekCatholicsHandler(e.target.checked, swiperState);
+    if (e.target.value == "ethnolinguistic")
+      return ethnolinguistic(e.target.checked);
   }
 });
 // Set current year
@@ -103,14 +128,20 @@ const key = "40ctAjlYbSwks22PprOn";
 const map = L.map("map", {
   center: [48.5, 31.5],
   zoom: 4,
-  maxBounds: [
-    [35, 15], // юго-западная точка (примерно)
-    [60, 50], // северо-восточная точка (примерно)
-  ],
+  // maxBounds: [
+  //   [35, 15], // юго-западная точка (примерно)
+  //   [60, 50], // северо-восточная точка (примерно)
+  // ],
   minZoom: 4,
   maxBoundsViscosity: 0, // prevent dragging outside
 });
 
+var imageOverlayEthnolinguistic = L.imageOverlay(imageUrl, latLngBounds, {
+  opacity: 0.8,
+  errorOverlayUrl: errorOverlayUrl,
+  alt: altText,
+  interactive: true,
+});
 // Tile layer: Before the war
 const beforeWar = L.maptiler
   .maptilerLayer({
