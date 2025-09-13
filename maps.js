@@ -162,29 +162,7 @@ export const maps = {
         "https://t4.ftcdn.net/jpg/04/24/98/43/360_F_424984311_aVJVGYH11w6oeIWoAfHuwI6wgRkVpilG.jpg",
       ],
     ],
-    jews: [
-      [
-        [50.45, 30.8233],
-        "Golda Meir",
-        "Born in Kyiv",
-        "One of the founders of the State of Israel",
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Golda_Meir_%281964%29_cropped.jpg/800px-Golda_Meir_%281964%29_cropped.jpg",
-      ],
-      [
-        [46.6558, 32.6178],
-        "Moshe Sharett",
-        "Born in Kherson",
-        "Prime Minister of Israel (1954–1955)",
-        "https://m.knesset.gov.il/About/Lexicon/PublishingImages/sharett_1.jpg",
-      ],
-      [
-        [50.452, 30.68],
-        "Antony Blinken",
-        "Great-grandson of Meir Blinken, a native of Pereiaslav (Kyiv oblast)",
-        "U.S. Secretary of State, of Ukrainian-Jewish descent",
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Secretary_Blinken%27s_Official_Department_Photo.jpg/250px-Secretary_Blinken%27s_Official_Department_Photo.jpg",
-      ],
-    ],
+
     romanCatholics: [
       [
         [50.452, 30.68],
@@ -194,9 +172,25 @@ export const maps = {
         "https://upload.wikimedia.org/wikipedia/commons/thumb/d/dd/Secretary_Blinken%27s_Official_Department_Photo.jpg/250px-Secretary_Blinken%27s_Official_Department_Photo.jpg",
       ],
     ],
-    protestants: [],
+    protestants: [
+      [
+        [53.1235, 25.2922],
+        "Pylyp Orlyk",
+        "Born in Kosuta (today in Belarus, but of Zaporozhian Cossack heritage)",
+        "Hetman of Ukraine in exile, author of the 1710 Constitution, influenced by Protestant political thought during his exile in Sweden",
+        "https://lh5.googleusercontent.com/proxy/C62yuwJu80TutbjRdyCroWUsNCei1Mz1QVg1Ags4o9qUApkDkw4NjH-iTzhs4Aj9AgZAobODvLw",
+      ],
+    ],
     baptists: [],
-    muslims: [],
+    muslims: [
+      [
+        [44.7511, 33.857],
+        "Ismail Gasprinsky",
+        "Born in Avcıköy near Bakhchisarai, Crimea",
+        "Crimean Tatar educator, publisher, and reformer; leading intellectual of Muslims in the Russian Empire",
+        "https://upload.wikimedia.org/wikipedia/commons/1/19/Ismail_Gasprinskiy.jpg",
+      ],
+    ],
     writers: [],
   },
   from1250: {
@@ -625,6 +619,31 @@ export const maps = {
         "https://upload.wikimedia.org/wikipedia/commons/c/c8/Piotr_Skarga_1.PNG",
       ],
     ],
+    protestants: [
+      [
+        [49.1014, 25.9645],
+        "Ivan Pulyui",
+        "Born in Hrymailiv, Ternopil Oblast",
+        "Ukrainian physicist, inventor, and Protestant intellectual; co-translator of the Bible into Ukrainian and pioneer in X-ray research",
+        "https://www.rbc.ua/static/img/_/_/____108_1300x820.jpg",
+      ],
+    ],
+    jews: [
+      [
+        [50.45, 30.8233],
+        "Golda Meir",
+        "Born in Kyiv",
+        "One of the founders of the State of Israel",
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Golda_Meir_%281964%29_cropped.jpg/800px-Golda_Meir_%281964%29_cropped.jpg",
+      ],
+      [
+        [46.6558, 32.6178],
+        "Moshe Sharett",
+        "Born in Kherson",
+        "Prime Minister of Israel (1954–1955)",
+        "https://m.knesset.gov.il/About/Lexicon/PublishingImages/sharett_1.jpg",
+      ],
+    ],
   },
   cent21: {
     map: [
@@ -768,21 +787,7 @@ export const maps = {
       [48.235, 29.47, "Catholic Parish (placeholder)"],
       [48.74, 27, "Catholic Parish (placeholder)"],
     ],
-    people: [
-      [
-        [50.45, 30.8233],
-        "Golda Meir",
-        "Born in Kyiv",
-        "One of the founders of the State of Israel",
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Golda_Meir_%281964%29_cropped.jpg/800px-Golda_Meir_%281964%29_cropped.jpg",
-      ],
-      [
-        [46.6558, 32.6178],
-        "Moshe Sharett",
-        "Born in Kherson",
-        "Prime Minister of Israel (1954–1955)",
-        "https://m.knesset.gov.il/About/Lexicon/PublishingImages/sharett_1.jpg",
-      ],
+    jews: [
       [
         [50.452, 30.68],
         "Antony Blinken",
@@ -819,6 +824,15 @@ export const maps = {
         "Born in Lviv, Lviv Oblast",
         "Major Archbishop of the Ukrainian Greek Catholic Church (2001–2011), influential spiritual leader",
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTWKWL09L7kb6IqQikwGKXX-ZhDiNWEPWZ8g&s",
+      ],
+    ],
+    muslims: [
+      [
+        [44.9521, 34.1024],
+        "Rustem Umerov",
+        "Born in Samarkand, Uzbekistan (deported Crimean Tatar family), later moved to Crimea",
+        "Ukrainian politician, businessman, and Crimean Tatar activist; appointed Minister of Defense of Ukraine in 2023",
+        "https://thumbor.my.ua/hMDZjoXmrJRtpsNumoKgQmspHCE=/400x300/smart/filters:format(jpeg)/https%3A%2F%2Fs3.eu-central-1.amazonaws.com%2Fmedia.my.ua%2Fadmin%2Fd80e91e4-b1be-4934-ba2e-f9846366e89c.jpeg",
       ],
     ],
     ortodoxChristians: [

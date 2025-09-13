@@ -24,6 +24,15 @@ const greekCatholicsmarkers = routs.map((rout) => {
 const ortodoxChristiansmarkers = routs.map((rout) => {
   return maps[rout].ortodoxChristians;
 });
+const protestantsmarkers = routs.map((rout) => {
+  return maps[rout].protestants;
+});
+const muslimsmarkers = routs.map((rout) => {
+  return maps[rout].muslims;
+});
+const jewsmarkers = routs.map((rout) => {
+  return maps[rout].jews;
+});
 
 const people = routs.map((rout) => {
   return maps[rout].people;
@@ -44,6 +53,9 @@ let typesOfMapsState = {
   people: false,
   greekCatholics: false,
   ortodoxChristians: false,
+  protestants: false,
+  muslims: false,
+  jews: false,
 };
 let typesOfMapstoggle = true;
 btn.addEventListener("click", (e) => {
@@ -89,6 +101,70 @@ const typesDrawer = (state, date) => {
         );
       });
   }
+  if (state.protestants) {
+    protestantsmarkers
+      .filter((_, i) => i <= date)
+      .filter(Array.isArray)
+      .flat()
+      .forEach((p) => {
+        myGroup.addLayer(
+          L.marker(p[0])
+            .addTo(map)
+            .bindPopup(
+              `<div class="popup"  style="height: 260px"><h3>${p[1]}</h3><p>${p[2]}<br>${p[3]}</p>
+     <img src="${p[4]}" alt="Portrait of Golda Meir" style="width: auto; height: 150px; margin-bottom:8px;"></div>`
+            )
+        );
+      });
+  }
+  if (state.muslims) {
+    muslimsmarkers
+      .filter((_, i) => i <= date)
+      .filter(Array.isArray)
+      .flat()
+      .forEach((p) => {
+        myGroup.addLayer(
+          L.marker(p[0])
+            .addTo(map)
+            .bindPopup(
+              `<div class="popup"  style="height: 260px"><h3>${p[1]}</h3><p>${p[2]}<br>${p[3]}</p>
+     <img src="${p[4]}" alt="Portrait of Golda Meir" style="width: auto; height: 150px; margin-bottom:8px;"></div>`
+            )
+        );
+      });
+  }
+  if (state.jews) {
+    jewsmarkers
+      .filter((_, i) => i <= date)
+      .filter(Array.isArray)
+      .flat()
+      .forEach((p) => {
+        myGroup.addLayer(
+          L.marker(p[0])
+            .addTo(map)
+            .bindPopup(
+              `<div class="popup"  style="height: 260px"><h3>${p[1]}</h3><p>${p[2]}<br>${p[3]}</p>
+     <img src="${p[4]}" alt="Portrait of Golda Meir" style="width: auto; height: 150px; margin-bottom:8px;"></div>`
+            )
+        );
+      });
+  }
+  if (state.muslims) {
+    muslimsmarkers
+      .filter((_, i) => i <= date)
+      .filter(Array.isArray)
+      .flat()
+      .forEach((p) => {
+        myGroup.addLayer(
+          L.marker(p[0])
+            .addTo(map)
+            .bindPopup(
+              `<div class="popup"  style="height: 260px"><h3>${p[1]}</h3><p>${p[2]}<br>${p[3]}</p>
+     <img src="${p[4]}" alt="Portrait of Golda Meir" style="width: auto; height: 150px; margin-bottom:8px;"></div>`
+            )
+        );
+      });
+  }
 };
 
 const borderHandler = (state, date) => {
@@ -111,6 +187,21 @@ const greekCatholicsHandler = (state, date) => {
 const ortodoxChristiansHandler = (state, date) => {
   console.log("ortodoxChristiansHandler");
   typesOfMapsState.ortodoxChristians = state;
+  typesDrawer(typesOfMapsState, date);
+};
+const protestantsHandler = (state, date) => {
+  console.log("protestants");
+  typesOfMapsState.protestants = state;
+  typesDrawer(typesOfMapsState, date);
+};
+const muslimsHandler = (state, date) => {
+  console.log("muslims");
+  typesOfMapsState.muslims = state;
+  typesDrawer(typesOfMapsState, date);
+};
+const jewsHandler = (state, date) => {
+  console.log("muslims");
+  typesOfMapsState.jews = state;
   typesDrawer(typesOfMapsState, date);
 };
 
@@ -141,6 +232,12 @@ container.addEventListener("change", (e) => {
       return ortodoxChristiansHandler(e.target.checked, swiperState);
     if (e.target.value == "ethnolinguistic")
       return ethnolinguistic(e.target.checked);
+    if (e.target.value == "protestants")
+      return protestantsHandler(e.target.checked, swiperState);
+    if (e.target.value == "muslims")
+      return muslimsHandler(e.target.checked, swiperState);
+    if (e.target.value == "jews")
+      return jewsHandler(e.target.checked, swiperState);
   }
 });
 // Set current year
