@@ -21,6 +21,9 @@ var latLngBounds = L.latLngBounds([
 const greekCatholicsmarkers = routs.map((rout) => {
   return maps[rout].greekCatholics;
 });
+const ortodoxChristiansmarkers = routs.map((rout) => {
+  return maps[rout].ortodoxChristians;
+});
 
 const people = routs.map((rout) => {
   return maps[rout].people;
@@ -40,6 +43,7 @@ let typesOfMapsState = {
   churches: false,
   people: false,
   greekCatholics: false,
+  ortodoxChristians: false,
 };
 let typesOfMapstoggle = true;
 btn.addEventListener("click", (e) => {
@@ -66,7 +70,22 @@ const typesDrawer = (state, date) => {
               `<div class="popup"  style="height: 260px"><h3>${p[1]}</h3><p>${p[2]}<br>${p[3]}</p>
      <img src="${p[4]}" alt="Portrait of Golda Meir" style="width: auto; height: 150px; margin-bottom:8px;"></div>`
             )
-            .openPopup()
+        );
+      });
+  }
+  if (state.ortodoxChristians) {
+    ortodoxChristiansmarkers
+      .filter((_, i) => i <= date)
+      .filter(Array.isArray)
+      .flat()
+      .forEach((p) => {
+        myGroup.addLayer(
+          L.marker(p[0])
+            .addTo(map)
+            .bindPopup(
+              `<div class="popup"  style="height: 260px"><h3>${p[1]}</h3><p>${p[2]}<br>${p[3]}</p>
+     <img src="${p[4]}" alt="Portrait of Golda Meir" style="width: auto; height: 150px; margin-bottom:8px;"></div>`
+            )
         );
       });
   }
@@ -87,6 +106,11 @@ const ethnolinguistic = (state, date) => {
 const greekCatholicsHandler = (state, date) => {
   console.log("greekCatholicsHandler");
   typesOfMapsState.greekCatholics = state;
+  typesDrawer(typesOfMapsState, date);
+};
+const ortodoxChristiansHandler = (state, date) => {
+  console.log("ortodoxChristiansHandler");
+  typesOfMapsState.ortodoxChristians = state;
   typesDrawer(typesOfMapsState, date);
 };
 
@@ -113,8 +137,8 @@ container.addEventListener("change", (e) => {
       return peopleHandler(e.target.checked, swiperState);
     if (e.target.value == "greekCatholics")
       return greekCatholicsHandler(e.target.checked, swiperState);
-    if (e.target.value == "greekCatholics")
-      return greekCatholicsHandler(e.target.checked, swiperState);
+    if (e.target.value == "ortodoxChristians")
+      return ortodoxChristiansHandler(e.target.checked, swiperState);
     if (e.target.value == "ethnolinguistic")
       return ethnolinguistic(e.target.checked);
   }

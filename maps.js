@@ -155,11 +155,11 @@ export const maps = {
 
     ortodoxChristians: [
       [
-        [50.45, 30.8233],
-        "Golda Meir",
-        "Born in Kyiv",
-        "One of the founders of the State of Israel",
-        "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/Golda_Meir_%281964%29_cropped.jpg/800px-Golda_Meir_%281964%29_cropped.jpg",
+        [50.4501, 30.5234],
+        "Volodymyr the Great",
+        "Born in Kyiv, Kievan Rus' (modern Ukraine)",
+        "Prince who Christianized Kievan Rus' in 988, introducing Orthodox Christianity",
+        "https://t4.ftcdn.net/jpg/04/24/98/43/360_F_424984311_aVJVGYH11w6oeIWoAfHuwI6wgRkVpilG.jpg",
       ],
     ],
     jews: [
@@ -819,6 +819,15 @@ export const maps = {
         "Born in Lviv, Lviv Oblast",
         "Major Archbishop of the Ukrainian Greek Catholic Church (2001–2011), influential spiritual leader",
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTTWKWL09L7kb6IqQikwGKXX-ZhDiNWEPWZ8g&s",
+      ],
+    ],
+    ortodoxChristians: [
+      [
+        [46.560443, 30.870092],
+        "Filaret (Denysenko)",
+        "Born in Kyiv, Ukraine",
+        "Patriarch of the Ukrainian Orthodox Church – Kyiv Patriarchate, key figure in Ukraine's religious independence",
+        "https://www.pomisna.info/wp-content/uploads/2019/03/filaret-2.jpg",
       ],
     ],
   },
