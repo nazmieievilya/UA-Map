@@ -9,6 +9,21 @@ const churches = routs.map((rout) => {
   return maps[rout].churches;
 });
 
+const ortodoxcross = L.icon({
+  iconUrl: "./orthodoxcross.png",
+
+  iconSize: [20, 22], // size of the icon
+  iconAnchor: [15, 0], // point of the icon which will correspond to marker's location
+  popupAnchor: [-5, 0], // point from which the popup should open relative to the iconAnchor
+});
+const catholiccross = L.icon({
+  iconUrl: "./catholiccross.png",
+
+  iconSize: [20, 22], // size of the icon
+  iconAnchor: [0], // point of the icon which will correspond to marker's location
+  popupAnchor: [10, 0], // point from which the popup should open relative to the iconAnchor
+});
+
 var imageUrl = "./dialects.png";
 var errorOverlayUrl = "https://cdn-icons-png.flaticon.com/512/110/110686.png";
 var altText =
@@ -76,7 +91,7 @@ const typesDrawer = (state, date) => {
       .flat()
       .forEach((p) => {
         myGroup.addLayer(
-          L.marker(p[0])
+          L.marker(p[0], { icon: catholiccross })
             .addTo(map)
             .bindPopup(
               `<div class="popup"  style="height: 260px"><h3>${p[1]}</h3><p>${p[2]}<br>${p[3]}</p>
@@ -92,7 +107,7 @@ const typesDrawer = (state, date) => {
       .flat()
       .forEach((p) => {
         myGroup.addLayer(
-          L.marker(p[0])
+          L.marker(p[0], { icon: ortodoxcross })
             .addTo(map)
             .bindPopup(
               `<div class="popup"  style="height: 260px"><h3>${p[1]}</h3><p>${p[2]}<br>${p[3]}</p>
