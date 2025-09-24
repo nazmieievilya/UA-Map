@@ -306,6 +306,15 @@ export const maps = {
       [48.235, 29.47, "Catholic Parish (placeholder)"],
       [48.74, 27, "Catholic Parish (placeholder)"],
     ],
+    freedom: [
+      [
+        "./zaporizhia.png",
+        [
+          [49.611396, 28.979731],
+          [45.384959, 39.941202],
+        ],
+      ],
+    ],
     people: [
       [
         [50.45, 30.8233],
@@ -573,6 +582,7 @@ export const maps = {
       [48.235, 29.47, "Catholic Parish (placeholder)"],
       [48.74, 27, "Catholic Parish (placeholder)"],
     ],
+
     people: [
       [
         [50.45, 30.8233],
@@ -786,6 +796,15 @@ export const maps = {
       [47.715, 34.22, "Historic St. Nicholas Chapel (approx.)"],
       [48.235, 29.47, "Catholic Parish (placeholder)"],
       [48.74, 27, "Catholic Parish (placeholder)"],
+    ],
+    freedom: [
+      [
+        "./germany freedom.png",
+        [
+          [54.441274, 9.456578],
+          [50.06189, 15.409602],
+        ],
+      ],
     ],
     jews: [
       [

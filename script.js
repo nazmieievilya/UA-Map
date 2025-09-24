@@ -12,7 +12,7 @@ const churches = routs.map((rout) => {
 const ortodoxcross = L.icon({
   iconUrl: "./orthodoxcross.png",
 
-  iconSize: [20, 22], // size of the icon
+  iconSize: [30], // size of the icon
   iconAnchor: [15, 0], // point of the icon which will correspond to marker's location
   popupAnchor: [-5, 0], // point from which the popup should open relative to the iconAnchor
 });
@@ -24,7 +24,17 @@ const catholiccross = L.icon({
   popupAnchor: [10, 0], // point from which the popup should open relative to the iconAnchor
 });
 
+const freedomOverlayDrawer = (src, bounds) =>
+  L.imageOverlay(src, bounds, {
+    opacity: 0.8,
+    errorOverlayUrl: errorOverlayUrl,
+    alt: altText,
+    interactive: true,
+  });
+
 var imageUrl = "./dialects.png";
+var imageFreedom = "./germany freedom.png";
+var imageFreedomZaporizia = "./zaporizhia.png";
 var errorOverlayUrl = "https://cdn-icons-png.flaticon.com/512/110/110686.png";
 var altText =
   "Image of Newark, N.J. in 1922. Source: The University of Texas at Austin, UT Libraries Map Collection.";
@@ -32,6 +42,19 @@ var latLngBounds = L.latLngBounds([
   [53.080689, 20.084192],
   [44.080185, 44.021595],
 ]);
+var latLngBoundsFreedom = L.latLngBounds([
+  [54.441274, 9.456578],
+  [50.06189, 15.409602],
+]);
+
+const inconsForMarkers = (src) =>
+  L.icon({
+    iconUrl: src,
+
+    iconSize: [30], // size of the icon
+    iconAnchor: [15, 0], // point of the icon which will correspond to marker's location
+    popupAnchor: [-5, 0], // point from which the popup should open relative to the iconAnchor
+  });
 
 const greekCatholicsmarkers = routs.map((rout) => {
   return maps[rout].greekCatholics;
@@ -47,6 +70,9 @@ const muslimsmarkers = routs.map((rout) => {
 });
 const jewsmarkers = routs.map((rout) => {
   return maps[rout].jews;
+});
+const freedomMaps = routs.map((rout) => {
+  return maps[rout].freedom;
 });
 
 const people = routs.map((rout) => {
@@ -71,6 +97,7 @@ let typesOfMapsState = {
   protestants: false,
   muslims: false,
   jews: false,
+  freedom: false,
 };
 let typesOfMapstoggle = true;
 btn.addEventListener("click", (e) => {
@@ -80,9 +107,6 @@ btn.addEventListener("click", (e) => {
 
 const typesDrawer = (state, date) => {
   myGroup.clearLayers();
-  if (state.borders) {
-    myGroup.addLayer(polygons[date]);
-  }
 
   if (state.greekCatholics) {
     greekCatholicsmarkers
@@ -139,7 +163,7 @@ const typesDrawer = (state, date) => {
       .flat()
       .forEach((p) => {
         myGroup.addLayer(
-          L.marker(p[0])
+          L.marker(p[0], { icon: inconsForMarkers(p[4]) })
             .addTo(map)
             .bindPopup(
               `<div class="popup"  style="height: 260px"><h3>${p[1]}</h3><p>${p[2]}<br>${p[3]}</p>
@@ -164,21 +188,17 @@ const typesDrawer = (state, date) => {
         );
       });
   }
-  if (state.muslims) {
-    muslimsmarkers
+  if (state.freedom) {
+    freedomMaps
       .filter((_, i) => i <= date)
       .filter(Array.isArray)
       .flat()
       .forEach((p) => {
-        myGroup.addLayer(
-          L.marker(p[0])
-            .addTo(map)
-            .bindPopup(
-              `<div class="popup"  style="height: 260px"><h3>${p[1]}</h3><p>${p[2]}<br>${p[3]}</p>
-     <img src="${p[4]}" alt="Portrait of Golda Meir" style="width: auto; height: 150px; margin-bottom:8px;"></div>`
-            )
-        );
+        myGroup.addLayer(freedomOverlayDrawer(p[0], p[1]));
       });
+  }
+  if (state.borders) {
+    myGroup.addLayer(polygons[date]);
   }
 };
 
@@ -194,6 +214,13 @@ const ethnolinguistic = (state, date) => {
   if (state) return imageOverlayEthnolinguistic.addTo(map);
   return map.removeLayer(imageOverlayEthnolinguistic);
 };
+
+const freedomOverlayHandler = (state, date) => {
+  console.log("freedomH");
+  typesOfMapsState.freedom = state;
+  typesDrawer(typesOfMapsState, date);
+};
+
 const greekCatholicsHandler = (state, date) => {
   console.log("greekCatholicsHandler");
   typesOfMapsState.greekCatholics = state;
@@ -253,6 +280,8 @@ container.addEventListener("change", (e) => {
       return muslimsHandler(e.target.checked, swiperState);
     if (e.target.value == "jews")
       return jewsHandler(e.target.checked, swiperState);
+    if (e.target.value == "freedom")
+      return freedomOverlayHandler(e.target.checked, swiperState);
   }
 });
 // Set current year
@@ -273,6 +302,12 @@ const map = L.map("map", {
 });
 
 var imageOverlayEthnolinguistic = L.imageOverlay(imageUrl, latLngBounds, {
+  opacity: 0.8,
+  errorOverlayUrl: errorOverlayUrl,
+  alt: altText,
+  interactive: true,
+});
+var imageOverlayFreedom = L.imageOverlay(imageFreedom, latLngBoundsFreedom, {
   opacity: 0.8,
   errorOverlayUrl: errorOverlayUrl,
   alt: altText,
